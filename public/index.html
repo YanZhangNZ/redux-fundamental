@@ -111,7 +111,7 @@
         }
         return next(action)
       }
-//the second middleware
+//the second middleware logger to show specific action and new state
       const logger = (store) => (next) => (action) => {
         console.group(action.type)
           console.log('action:',action);
@@ -120,11 +120,19 @@
         console.groupEnd();
         return result;
       }
+//the third middleware reminder to alert msg along with new action
+      const reminder = (store)=>(next)=>(action)=>{
+      if(action.type === ADD_GOAL)
+        alert('that\'s a great goal!')
+      if(action.type === ADD_TODO)
+        console.log('Don\'t forget to',action.todo.name)
+        return next(action)
+      }
 
       const store = Redux.createStore(Redux.combineReducers({
         todos,
         goals,
-      }),Redux.applyMiddleware(checker,logger))
+      }),Redux.applyMiddleware(checker,logger,reminder))
 
       store.subscribe(() => {
         const {
