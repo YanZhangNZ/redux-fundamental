@@ -25,6 +25,15 @@
       const TOGGLE_TODO = 'TOGGLE_TODO'
       const ADD_GOAL = 'ADD_GOAL'
       const REMOVE_GOAL = 'REMOVE_GOAL'
+      const RECEIVE_DATA = 'RECEIVE_DATA'
+
+      function receiveDataAction(todos,goals){
+        return{
+          type: RECEIVE_DATA,
+          todos,
+          goals
+        }
+      }
 
       function addTodoAction(todo) {        
         return {
@@ -72,6 +81,8 @@
             Object.assign({}, todo, {
               complete: !todo.complete
             }))
+        case RECEIVE_DATA:
+          return action.todos;
         default:
           return state
         }
@@ -83,6 +94,8 @@
           return state.concat([action.goal])
         case REMOVE_GOAL:
           return state.filter((goal) => goal.id !== action.id)
+        case RECEIVE_DATA:
+          return action.goals;
         default:
           return state
         }
@@ -223,16 +236,16 @@
         componentDidMount() {
           const {store} = this.props;
           //we can do fetching data seperatedly
-          API.fetchTodos().then(res=>console.log('todos,',res)).then(err=>err&&console.log('error of todos:',err));
-          API.fetchGoals().then(res=>console.log('goals,',res)).then(err=>err&&console.log('error of goals:',err));
+          // API.fetchTodos().then(res=>console.log('todos,',res)).then(err=>err&&console.log('error of todos:',err));
+          // API.fetchGoals().then(res=>console.log('goals,',res)).then(err=>err&&console.log('error of goals:',err));
+
           //or we can do promise.all([promise1,promise2,promise3]).then(value)
-          // Promise.all([
-          //   API.fetchTodos(),
-          //   API.fetchGoals()
-          // ]).then(([todos,goals])=>{
-          //   console.log('todos:',todos);
-          //   console.log('goals:',goals)
-          // });
+          Promise.all([
+            API.fetchTodos(),
+            API.fetchGoals()
+          ]).then(([todos,goals])=>{
+            store.dispatch(receiveDataAction(todos,goals));
+          });
           store.subscribe(()=>this.forceUpdate())
         }
 
