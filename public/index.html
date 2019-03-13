@@ -7,6 +7,7 @@
     <script src="https://unpkg.com/react@16.3.0-alpha.1/umd/react.development.js"></script>
     <script src="https://unpkg.com/react-dom@16.3.0-alpha.1/umd/react-dom.development.js"></script>
     <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+    <script src="https://tylermcginnis.com/goals-todos-api/index.js"></script>
   </head>
 
   <body>
@@ -221,6 +222,17 @@
 
         componentDidMount() {
           const {store} = this.props;
+          //we can do fetching data seperatedly
+          API.fetchTodos().then(res=>console.log('todos,',res)).then(err=>err&&console.log('error of todos:',err));
+          API.fetchGoals().then(res=>console.log('goals,',res)).then(err=>err&&console.log('error of goals:',err));
+          //or we can do promise.all([promise1,promise2,promise3]).then(value)
+          // Promise.all([
+          //   API.fetchTodos(),
+          //   API.fetchGoals()
+          // ]).then(([todos,goals])=>{
+          //   console.log('todos:',todos);
+          //   console.log('goals:',goals)
+          // });
           store.subscribe(()=>this.forceUpdate())
         }
 
