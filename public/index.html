@@ -188,9 +188,12 @@
         }
 
         removeAction = (action) => {
+          this.props.store.dispatch(removeTodoAction(action.id))
+
           return API.deleteTodo(action.id)
             .then(()=>{
-              this.props.store.dispatch(removeTodoAction(action.id))
+              this.props.store.dispatch(addTodoAction(action));
+              alert('error occured. please try again.');
             })
         }
         
