@@ -191,7 +191,7 @@
           this.props.store.dispatch(removeTodoAction(action.id))
 
           return API.deleteTodo(action.id)
-            .then(()=>{
+            .catch(()=>{
               this.props.store.dispatch(addTodoAction(action));
               alert('error occured. please try again.');
             })
@@ -199,6 +199,13 @@
         
         toggleAction = (action)=> {
           this.props.store.dispatch(toggleTodoAction(action.id))
+
+          return API.saveTodoToggle(action.id)
+          .catch(()=>{            
+            this.props.store.dispatch(toggleTodoAction(action.id));
+            alert('error occured. cannot toggle.');
+          })
+          
         }
 
         render(){
@@ -232,7 +239,7 @@
           this.props.store.dispatch(removeGoalAction(action.id))
 
           return API.deleteGoal(action.id)
-            .then(()=>{
+            .catch(()=>{
               this.props.store.dispatch(addGoalAction(action));
               alert('error occured. please try again.');
             })
