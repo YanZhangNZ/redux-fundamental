@@ -79,6 +79,18 @@
         }
       }
 
+      function handleDeleteTodo(todo){
+        return(dispatch)=> {
+          dispatch(removeTodoAction(action.id))
+        }
+        return API.deleteTodo(action.id)
+          .catch(()=>{
+            this.props.store.dispatch(addTodoAction(action));
+            alert('error occured. please try again.');
+          })
+      }
+      
+
       function todos(state=[], action) {
         switch (action.type) {
         case ADD_TODO:
@@ -142,6 +154,13 @@
         console.log('Don\'t forget to',action.todo.name)
         return next(action)
       }
+//create a thunk to handle this situation: if dispatched action is a function then we invoke it passing a dispatch. otherwise we do as we normally do.
+      const thunk = (store) => (next) => (action) => {
+        if(typeof action === 'function'){
+          return action(store.dispatch)
+        }
+        return next(action)
+      }
 
       const store = Redux.createStore(Redux.combineReducers({
         todos,
@@ -187,14 +206,9 @@
           .catch(()=>{alert('there was an error.Try again.')})
         }
 
-        removeAction = (action) => {
-          this.props.store.dispatch(removeTodoAction(action.id))
 
-          return API.deleteTodo(action.id)
-            .catch(()=>{
-              this.props.store.dispatch(addTodoAction(action));
-              alert('error occured. please try again.');
-            })
+        removeAction = (action) => {
+          this.props.store.dispatch(handleDeleteTodo(action.id))
         }
         
         toggleAction = (action)=> {
