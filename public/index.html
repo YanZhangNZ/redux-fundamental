@@ -8,6 +8,7 @@
     <script src="https://unpkg.com/react-dom@16.3.0-alpha.1/umd/react-dom.development.js"></script>
     <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
     <script src="https://tylermcginnis.com/goals-todos-api/index.js"></script>
+    <script src="https://unpkg.com/redux-thunk@2.2.0/dist/redux-thunk.min.js"></script>
   </head>
 
   <body>
@@ -79,17 +80,17 @@
         }
       }
 
+//create this action to handle deleting todo. but this returns a function. that is why we apply for thunk.
       function handleDeleteTodo(todo){
         return(dispatch)=> {
-          dispatch(removeTodoAction(action.id))
+          dispatch(removeTodoAction(todo.id))
         }
-        return API.deleteTodo(action.id)
+        return API.deleteTodo(todo.id)
           .catch(()=>{
-            this.props.store.dispatch(addTodoAction(action));
+            this.props.store.dispatch(addTodoAction(todo));
             alert('error occured. please try again.');
           })
-      }
-      
+      }      
 
       function todos(state=[], action) {
         switch (action.type) {
@@ -155,6 +156,7 @@
         return next(action)
       }
 //create a thunk to handle this situation: if dispatched action is a function then we invoke it passing a dispatch. otherwise we do as we normally do.
+     
       const thunk = (store) => (next) => (action) => {
         if(typeof action === 'function'){
           return action(store.dispatch)
@@ -166,7 +168,7 @@
         todos,
         goals,
         loading
-      }),Redux.applyMiddleware(checker,logger,reminder))
+      }),Redux.applyMiddleware(ReduxThunk.default,checker,logger,reminder))
 
 
  
@@ -208,7 +210,7 @@
 
 
         removeAction = (action) => {
-          this.props.store.dispatch(handleDeleteTodo(action.id))
+          this.props.store.dispatch(handleDeleteTodo(action))
         }
         
         toggleAction = (action)=> {
