@@ -90,7 +90,17 @@
             this.props.store.dispatch(addTodoAction(todo));
             alert('error occured. please try again.');
           })
-      }      
+      }  
+      function handleDeleteGoal(goal){
+        return(dispatch)=> {
+          dispatch(removeGoalAction(goal.id))
+        }
+        return API.deleteGoal(goal.id)
+          .catch(()=>{
+            this.props.store.dispatch(addGoalAction(goal));
+            alert('error occured. please try again.');
+          })
+      }     
 
       function todos(state=[], action) {
         switch (action.type) {
@@ -157,12 +167,12 @@
       }
 //create a thunk to handle this situation: if dispatched action is a function then we invoke it passing a dispatch. otherwise we do as we normally do.
      
-      const thunk = (store) => (next) => (action) => {
-        if(typeof action === 'function'){
-          return action(store.dispatch)
-        }
-        return next(action)
-      }
+      // const thunk = (store) => (next) => (action) => {
+      //   if(typeof action === 'function'){
+      //     return action(store.dispatch)
+      //   }
+      //   return next(action)
+      // }
 
       const store = Redux.createStore(Redux.combineReducers({
         todos,
@@ -251,15 +261,11 @@
           id: generateId()
           }))
         }
+        
         removeAction = (action) => {
-          this.props.store.dispatch(removeGoalAction(action.id))
-
-          return API.deleteGoal(action.id)
-            .catch(()=>{
-              this.props.store.dispatch(addGoalAction(action));
-              alert('error occured. please try again.');
-            })
+          this.props.store.dispatch(handleDeleteGoal(action))
         }
+
         render(){
           return(
             <div>
